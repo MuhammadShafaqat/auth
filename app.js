@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const  authRoutes  = require("./routes/index");
+const  {authRoutes,categoryRoutes}  = require("./routes/index");
 const app = express();
 require('dotenv/config');
 app.use(express.json()); // to parse body in requests
@@ -16,7 +16,8 @@ mongoose.connection.on("connected", () => {
 mongoose.connection.on("error", () => {
   console.log("Something wrong with the DB connection");
 });
-app.use('/', authRoutes)
+app.use('/', authRoutes);
+app.use('/', categoryRoutes);
 
 
 
