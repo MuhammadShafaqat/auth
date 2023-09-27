@@ -3,11 +3,12 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const  authRoutes  = require("./routes/index");
 const app = express();
+require('dotenv/config');
 app.use(express.json()); // to parse body in requests
 app.use(cors());
 
-mongoose.connect("mongodb://127.0.0.1:27017/e-com");
-
+mongoose.connect(process.env.CONNECTION_STRING);
+              
 mongoose.connection.on("connected", () => {
   console.log("Database Connected");
 });
