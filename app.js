@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const  {authRoutes,categoryRoutes}  = require("./routes/index");
+const  {authRoutes,categoryRoutes, productRoutes}  = require("./routes/index");
 const app = express();
 require('dotenv/config');
 app.use(express.json()); // to parse body in requests
@@ -18,6 +18,7 @@ mongoose.connection.on("error", () => {
 });
 app.use('/', authRoutes);
 app.use('/', categoryRoutes);
+app.use('/', productRoutes)
 
 
 

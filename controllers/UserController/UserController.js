@@ -31,16 +31,17 @@ const deleteUser = async (req,res)=>{
    }
 }
 // Count the total number of users
-const countUsers = async (req, res) => {
+  const countUsers = async (req, res) => {
     try {
+      // Use Mongoose to count the documents in the "categories" collection
       const userCount = await UserModel.countDocuments();
-      console.log(userCount)
-      return res.status(200).send(userCount );
+  
+      return res.status(200).json({ success: true, count: userCount });
     } catch (error) {
-        console.log(error.message)
-      return res.status(500).json({ success: false, message: 'Server Error' });
+      console.error(error);
+      return res.status(500).json({ success: false, message: 'Internal server error' });
     }
-  };
+  }
 
 
 module.exports ={ getUsers, getSingleUser, deleteUser, countUsers}

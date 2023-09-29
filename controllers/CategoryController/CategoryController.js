@@ -5,9 +5,9 @@ const getCategories = async (req, res)=>{
     try {
         const category = await CategoryModel.find();
         if(!category){
-         return res.status(400).json({success: false, message: 'category can not be created'})
+         return res.status(404).json({success: false, message: 'category not found'})
         }
-        return res.status(201).json(category)
+        return res.status(200).json(category)
     } catch (error) {
          console.error(error);
          return res.status(500).json({success: false, message: 'server error'})
@@ -19,7 +19,7 @@ const getSingleCategory = async (req,res)=>{
         const category = await CategoryModel.findById(req.params.id);
 
         if (!category) {
-            return res.status(400).json({success:false, message:'category not found against this id'})
+            return res.status(404).json({success:false, message:'category not found against this id'})
         }
         return res.status(201).json(category)
         
@@ -67,6 +67,7 @@ const createCategory = async (req, res)=>{
             try {
                 const category = await CategoryModel.create(req.body);
                 if(!category){
+                // res.status(400).json({ error: 'Invalid request data' });
                  return res.status(400).json({success: false, message: 'category can not be created'})
                 }
                 return res.status(201).json(category)

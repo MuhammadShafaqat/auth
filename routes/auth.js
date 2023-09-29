@@ -6,9 +6,10 @@ const authRoutes = express.Router();
 authRoutes.post('/register', registerUser);
 authRoutes.post('/login', loginUser);
 authRoutes.get('/users', getUsers);
+authRoutes.get(`/users/count`, countUsers);
 authRoutes.get('/users/:id', getSingleUser);
 authRoutes.delete('/users/:id', deleteUser);
-authRoutes.get(`/users/count`, countUsers);
+
 
 
 module.exports = authRoutes ;
