@@ -14,6 +14,18 @@ const getProduct = async (req,res)=>{
         return res.status(500).json({success: false, message: 'Internal server error'})
       }
 }
+// get for a single product
+const getSingleProduct = async (req, res)=>{
+                    try {                 
+                const product = await ProductModel.findById(req.params.id).populate('category');
+                    if (!product) {
+                    return res.status(404).json({success:false, message:'product not found'})     
+                        }
+                    return res.status(200).json(product)
+                } catch (error) {
+                  return res.status(500).json({success:true,message:'Internal server error'})      
+                    }
+}
 
 // post request for product
 const createProduct = async (req,res)=>{
@@ -35,4 +47,4 @@ const createProduct = async (req,res)=>{
         }
 }
 
-module.exports = {createProduct,getProduct}
+module.exports = {createProduct,getProduct,getSingleProduct}
