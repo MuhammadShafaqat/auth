@@ -85,6 +85,19 @@ const featureProducts = async (req,res)=>{
             return res.status(500).status({success:false, message:'Internal server error'})
         }
 }
+// In order to count the featured products 
+const countFeature = async (req,res)=>{
+   try {
+    const countFeature = await ProductModel.countDocuments({isFeatured:true});
+    if (!countFeature) {
+        return res.status(404).json({success:false,message:"no feature product found"})
+    }
+    return res.status(200).json({success:true,message:`there are ${countFeature} featured products`})
+   } catch (error) {
+    console.error(error);
+    return res.status(500).json({success:false,message:'Internal server error'})
+   }
+}
 // In order to limit the number of featured products
 const featuredLimit = async (req,res)=>{
           try {
@@ -100,4 +113,5 @@ const featuredLimit = async (req,res)=>{
           }
 }
 
-module.exports = {createProduct,getProduct,getSingleProduct,deleteProduct,countProducts,featureProducts,featuredLimit}
+module.exports = {createProduct,getProduct,getSingleProduct,deleteProduct,countProducts,featureProducts,
+    featuredLimit,countFeature}
