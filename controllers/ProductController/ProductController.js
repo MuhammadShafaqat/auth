@@ -59,5 +59,18 @@ const createProduct = async (req,res)=>{
 
         }
 }
+// get request for count of products
+const countProducts = async (req,res)=>{
+        try {
+            const productsCount = await ProductModel.countDocuments();
+            if (!productsCount) {
+            return res.status(404).json({success:false,message:"products not exists"})
+            }
+            return res.status(200).json({success:true,count:productsCount,message:`stock has ${productsCount} products`})
+        } catch (error) {
+            console.error(error)
+            return res.status(500).json({success:false, message:'Internal server error'})
+        }
+}
 
-module.exports = {createProduct,getProduct,getSingleProduct,deleteProduct}
+module.exports = {createProduct,getProduct,getSingleProduct,deleteProduct,countProducts}
