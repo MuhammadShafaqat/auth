@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const CategoryModel = require('../../models/CategoryModel');
 const ProductModel = require('../../models/ProductModel');
 
@@ -59,6 +60,26 @@ const createProduct = async (req,res)=>{
 
         }
 }
+//put request to update the product 
+const updateProduct = async (req,res)=>{
+try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(500).json({success:false,message:'Invalid object Id'})
+    }
+    const category = await CategoryModel.findById(req.body.category);
+    if (!category) {
+        return res.status(400).json({success:false,message:'Invalid category'})
+    }
+    const updateProduct = await ProductModel.findByIdAndUpdate(req.params.id,req.body,{new: true});
+    if (!updateProduct) {
+        return res.status(404).json({success:false,message:'product not founf'});
+    }
+    return res.send(updateProduct)
+} catch (error) {
+    console.error(error);
+    return res.status(500).json({success:false,message:'Internal server error'})
+}
+}
 // get request for count of products
 const countProducts = async (req,res)=>{
         try {
@@ -113,5 +134,5 @@ const featuredLimit = async (req,res)=>{
           }
 }
 
-module.exports = {createProduct,getProduct,getSingleProduct,deleteProduct,countProducts,featureProducts,
+module.exports = {createProduct,getProduct,getSingleProduct,deleteProduct,updateProduct,countProducts,featureProducts,
     featuredLimit,countFeature}
