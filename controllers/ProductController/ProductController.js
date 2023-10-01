@@ -26,6 +26,19 @@ const getSingleProduct = async (req, res)=>{
                   return res.status(500).json({success:true,message:'Internal server error'})      
                     }
 }
+//delete product request 
+const deleteProduct = async (req, res)=>{
+            try {
+                const product = await ProductModel.findByIdAndDelete(req.params.id);
+                if (!product) {
+            return res.status(404).json({success:false,message:'product not found'})
+                }
+            return res.status(202).json({success: true, message: 'product deleted successfully'})
+            } catch (error) {
+                console.error(error);
+            return res.status(500).json({success:false, message:'Internal server error'})
+            }
+}
 
 // post request for product
 const createProduct = async (req,res)=>{
@@ -47,4 +60,4 @@ const createProduct = async (req,res)=>{
         }
 }
 
-module.exports = {createProduct,getProduct,getSingleProduct}
+module.exports = {createProduct,getProduct,getSingleProduct,deleteProduct}
