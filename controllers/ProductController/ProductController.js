@@ -72,5 +72,18 @@ const countProducts = async (req,res)=>{
             return res.status(500).json({success:false, message:'Internal server error'})
         }
 }
+// In order to get featured products
+const featureProducts = async (req,res)=>{
+        try {
+            const products = await ProductModel.find({isFeatured: true});
+            if (!products) {
+            return res.status(404).json({success:false, message:'there is no featured products'});
+            }
+            return res.status(200).json(products);
+        } catch (error) {
+            console.error(error)
+            return res.status(500).status({success:false, message:'Internal server error'})
+        }
+}
 
-module.exports = {createProduct,getProduct,getSingleProduct,deleteProduct,countProducts}
+module.exports = {createProduct,getProduct,getSingleProduct,deleteProduct,countProducts,featureProducts}
