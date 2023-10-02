@@ -1,7 +1,8 @@
 const OrderModel = require('../../models/OrderModel');
+const OrderItemModel = require('../../models/OrderItemModel')
 
 
-const getOrder = async ()=>{
+const getOrder = async (req,res)=>{
     try {
         const orderList = await OrderModel.find();
         if (!orderList) {
@@ -12,10 +13,45 @@ const getOrder = async ()=>{
         console.error(error);
         return res.status(500).json({success:false, message:'Internal server error'})
     }
+};
+//create an order
+const createOrder = async (req,res)=>{
+    try {
+
+        const orderItemsIds = Promise.all(req.body.orderItems.map(async (orderItem)=>{
+             let newOrderItem = await OrderItemModel.create({
+                quantity:orderItem.quantity,
+                product:orderItem.product
+             })        
+             return newOrderItem.id     
+        }))
+        const orderItemsResolvedIds = await orderItemsIds
+        console.log(orderItemsResolvedIds)
+
+        let order = await OrderModel.create({
+            orderItems:orderItemsResolvedIds,
+            shippingAddress1:req.body.shippingAddress1,
+            shippingAddress2:req.body.shippingAddress2,
+            city:req.body.city,
+            zip:req.body.zip,
+            country:req.body.country,
+            phone:req.body.phone,
+            status:req.body.status,
+            totalPrice:req.body.totalPrice,
+            user:req.body.user
+        });
+        if (!order) {
+            return res.status(400).json({success:false, message:'order can not be created'});
+        }
+        return res.status(200).json(order);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({success:false, message:'Internal server error'}) 
+    }
 }
 
 // get request for single order
-const getSingleOrder = async ()=>{
+const getSingleOrder = async (req,res)=>{
     try {
         const order = await OrderModel.findById(req.params.id);
         if (!order) {
@@ -28,4 +64,4 @@ const getSingleOrder = async ()=>{
     }
 }
 
-module.exports = {getOrder, getSingleOrder}
+module.exports = {getOrder, getSingleOrder,createOrder}
