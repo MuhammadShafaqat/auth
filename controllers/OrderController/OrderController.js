@@ -56,8 +56,14 @@ const createOrder = async (req,res)=>{
              return newOrderItem.id     
         }))
         const orderItemsResolvedIds = await orderItemsIds
-        console.log(orderItemsResolvedIds)
-
+       // In order to avoid the someone fakes change the order items values, we fix them at backnd 
+       const totalPrices = await Promise.all(orderItemsResolvedIds.map(async orderItemId =>{
+                  const orderItem = await OrderItemModel.findById(orderItemId).populate('product','price');
+                  const totalPrice = orderItem.product.price*orderItem.quantity;
+                  return totalPrice
+       }))
+console.log(totalPrices)
+      const totalPrice = totalPrices.reduce((a,b)=>a+b,0)
         let order = await OrderModel.create({
             orderItems:orderItemsResolvedIds,
             shippingAddress1:req.body.shippingAddress1,
@@ -67,7 +73,8 @@ const createOrder = async (req,res)=>{
             country:req.body.country,
             phone:req.body.phone,
             status:req.body.status,
-            totalPrice:req.body.totalPrice,
+            // totalPrice:req.body.totalPrice,
+            totalPrice:totalPrice,
             user:req.body.user
         });
         if (!order) {
@@ -134,7 +141,18 @@ const deleteOrder = async (req,res)=>{
      return res.status(500).json({success: false, message: 'Server Error'})
     }
  }
+// In order to get total orders sales 
+const totalSales = async (req,res)=>{
+       const totalSales = await OrderModel.aggregate([
+        {$group: {_id: null, totalsales: {$sum: '$totalPrice'}}}
+       ])
+    if (!totalSales) {
+        return res.status(400).json({success:false, message:'The order sale can not be generated'})
+    }
+    return res.status(200).send({totalsales: totalSales.pop().totalsales})
+}
 
 
 
-module.exports = {getOrder, getSingleOrder,createOrder,updateOrderStatus,deleteOrder}
+
+module.exports = {getOrder, getSingleOrder,createOrder,updateOrderStatus,deleteOrder,totalSales}
