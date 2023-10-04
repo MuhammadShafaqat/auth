@@ -151,8 +151,39 @@ const totalSales = async (req,res)=>{
     }
     return res.status(200).send({totalsales: totalSales.pop().totalsales})
 }
+//In order to calculate the numbers of order, we make a get request
+const countOrders = async (req,res)=>{
+           try {
+            const orderCouunt = await OrderModel.countDocuments();
+            if (!orderCouunt) {
+                return res.status(400).json({success:false, message: 'there is no order placed'});
+            }
+            return res.status(200).send({orderCouunt: orderCouunt})
+           } catch (error) {
+            console.error(error);
+            return res.status(500).json({success:false, message: 'Internnal Server error'});
+           }
+}  
+//Next in order to find the number of orders by a specific user
+const userOrders = async (req,res)=>{
+            try {
+                const userOrderList = await OrderModel.find({user:req.params.userId})
+                .populate({
+                    path: 'orderItems', populate: {
+                        path: 'product',populate: 'category'}
+                    }).sort({'dateOrdered':-1});
+            if (!userOrderList) {
+                return res.status(400).json({success:false, message: 'there is no order'});
+            }
+            return res.status(200).send(userOrderList)
+            } catch (error) {
+                console.error(error);
+                return res.status(500).json({success:false, message: 'Internnal Server error'});
+            }
+}
 
 
 
 
-module.exports = {getOrder, getSingleOrder,createOrder,updateOrderStatus,deleteOrder,totalSales}
+
+module.exports = {getOrder, getSingleOrder,createOrder,updateOrderStatus,deleteOrder,totalSales,countOrders,userOrders}
