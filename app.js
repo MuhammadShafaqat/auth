@@ -6,6 +6,20 @@ const app = express();
 require('dotenv/config');
 app.use(express.json()); // to parse body in requests
 app.use(cors());
+const multer  = require('multer')
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/uploads')
+  },
+  filename: function (req, file, cb) {
+    const fileName = file.originalname.split(' ').join(' ')
+    cb(null, fileName + '-' + Date.now())
+  }
+})
+
+const uploadOptions = multer({ storage: storage })
+
 
 mongoose.connect(process.env.CONNECTION_STRING);
               
